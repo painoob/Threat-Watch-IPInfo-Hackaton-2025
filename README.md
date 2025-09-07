@@ -21,6 +21,9 @@ A comprehensive threat intelligence dashboard that leverages IPinfo Lite's geolo
 
 ![Dashboard Preview](https://github.com/painoob/Threat-Watch-IPInfo-Hackaton-2025/blob/main/preview.jpg)
 
+![129c21a6-0311-4c28-9d06-6cee000e1463](https://github.com/user-attachments/assets/7236de94-4b8f-4021-9c94-0534e2f75025)
+
+
 ## 🛠️ Installation
 
 ### Prerequisites
