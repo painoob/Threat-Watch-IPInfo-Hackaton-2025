@@ -1,3 +1,4 @@
+
 <?php require_once __DIR__.'/config.php'; ?>
 <!doctype html>
 <html lang="en">
@@ -7,32 +8,260 @@
 <title>Threat Watch - IPInfo Hackathon 2025</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
-body{font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;margin:0;padding:0;color:#111}
-header{background:#111;color:#fff;padding:1rem 1.25rem}
-.container{display:grid;grid-template-columns:1fr 380px;gap:1rem;padding:1rem}
-.card{background:#fff;border-radius:8px;padding:1rem;box-shadow:0 4px 14px rgba(0,0,0,0.06)}
-#map{height:600px;border-radius:8px}
-textarea{width:100%;height:160px}
-table{width:100%;border-collapse:collapse}
-table th, table td{padding:6px;border-bottom:1px solid #eee}
-.btn{display:inline-block;padding:8px 12px;border-radius:6px;background:#111;color:#fff;text-decoration:none}
-.loading{opacity:0.6;pointer-events:none}
-.malicious{background-color:#ffebee;border-left:4px solid #f44336}
-.suspicious{background-color:#fff8e1;border-left:4px solid #ffc107}
-.clean{background-color:#e8f5e9;border-left:4px solid #4caf50}
-.threat-badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:0.8rem;font-weight:500}
-.threat-malicious{background:#f44336;color:white}
-.threat-suspicious{background:#ff9800;color:white}
-.threat-clean{background:#4caf50;color:white}
-.config-warning{background:#fff3cd;color:#856404;padding:12px;border-radius:6px;margin-bottom:1rem;border-left:4px solid #ffc107}
+:root {
+    /* Light theme (default) */
+    --bg-primary: #f8f9fa;
+    --bg-secondary: #ffffff;
+    --bg-header: #111;
+    --text-primary: #111;
+    --text-secondary: #495057;
+    --border-color: #dee2e6;
+    --card-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    --hover-bg: #f1f3f5;
+}
+
+[data-theme="dark"] {
+    --bg-primary: #121212;
+    --bg-secondary: #1e1e1e;
+    --bg-header: #000;
+    --text-primary: #e9ecef;
+    --text-secondary: #adb5bd;
+    --border-color: #343a40;
+    --card-shadow: 0 4px 14px rgba(0,0,0,0.3);
+    --hover-bg: #2d2d2d;
+}
+
+body {
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+header {
+    background: var(--bg-header);
+    color: #fff;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.theme-toggle {
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.card {
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: var(--card-shadow);
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+#map {
+    height: 600px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+textarea {
+    width: 100%;
+    height: 160px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 0.5rem;
+    resize: vertical;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 6px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.btn {
+    display: inline-block;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background: #111;
+    color: #fff;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.malicious {
+    background-color: rgba(244, 67, 54, 0.1);
+    border-left: 4px solid #f44336;
+}
+
+.suspicious {
+    background-color: rgba(255, 152, 0, 0.1);
+    border-left: 4px solid #ff9800;
+}
+
+.clean {
+    background-color: rgba(76, 175, 80, 0.1);
+    border-left: 4px solid #4caf50;
+}
+
+.threat-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.threat-malicious {
+    background: #f44336;
+    color: white;
+}
+
+.threat-suspicious {
+    background: #ff9800;
+    color: white;
+}
+
+.threat-clean {
+    background: #4caf50;
+    color: white;
+}
+
+.config-warning {
+    background: #fff3cd;
+    color: #856404;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    border-left: 4px solid #ffc107;
+}
+
+[data-theme="dark"] .config-warning {
+    background: #332701;
+    color: #e0cb7b;
+}
+
+/* Theme toggle switch */
+.theme-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.theme-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* Dark mode map adjustments */
+[data-theme="dark"] .leaflet-tile {
+    filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) brightness(0.7) invert(1);
+}
+
+[data-theme="dark"] .leaflet-control-attribution {
+    background-color: rgba(30, 30, 30, 0.8);
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .leaflet-popup-content-wrapper {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .leaflet-popup-tip {
+    background-color: var(--bg-secondary);
+}
 </style>
 </head>
-<body>
+<body data-theme="light">
 <header>
-<div style="display:flex;align-items:center;justify-content:space-between">
-<h1 style="margin:0;font-size:1.1rem">Threat Watch</h1>
-<div>IPInfo: <strong>Hackathon 2025</strong></div>
-</div>
+    <div class="header-content">
+        <h1 style="margin:0;font-size:1.1rem">Threat Watch</h1>
+        <div>
+            <button class="theme-toggle" id="themeToggle">
+                <span class="theme-text">Dark Mode</span>
+                <label class="theme-switch">
+                    <input type="checkbox" id="themeCheckbox">
+                    <span class="slider"></span>
+                </label>
+            </button>
+        </div>
+    </div>
 </header>
 
 <div class="container">
@@ -49,8 +278,7 @@ table th, table td{padding:6px;border-bottom:1px solid #eee}
 </main>
 
 <aside>
-<?php if (!is_threat_intel_configured()): ?>
-<div class="config-warning">
+<div class="config-warning" id="configWarning" style="display: none;">
 <strong>Warning:</strong> Threat intelligence APIs are not configured. 
 <a href="#" id="showConfigHelp">Click here</a> for setup instructions.
 </div>
@@ -63,7 +291,6 @@ table th, table td{padding:6px;border-bottom:1px solid #eee}
 <li>IPQUALITYSCORE_KEY - Get from <a href="https://www.ipqualityscore.com/" target="_blank">IPQualityScore</a></li>
 </ul>
 </div>
-<?php endif; ?>
 
 <div class="card">
 <h3>Enrich IPs</h3>
@@ -121,6 +348,71 @@ let threatStats = {
     clean: 0,
     total: 0
 };
+
+// Theme toggle functionality - CORRIGIDA
+function initTheme() {
+    const themeToggle = document.getElementById('themeToggle');
+    const themeCheckbox = document.getElementById('themeCheckbox');
+    const themeText = document.querySelector('.theme-text');
+    const body = document.body;
+
+    // Check for saved theme preference or respect OS preference
+    const savedTheme = localStorage.getItem('theme');
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    // Determine initial theme
+    let currentTheme = 'light';
+    if (savedTheme) {
+        currentTheme = savedTheme; // User preference takes priority
+    } else if (systemPrefersDark) {
+        currentTheme = 'dark'; // Fall back to system preference
+    }
+
+    // Apply the initial theme
+    body.setAttribute('data-theme', currentTheme);
+    themeCheckbox.checked = (currentTheme === 'dark');
+    themeText.textContent = currentTheme === 'dark' ? 'Light Mode' : 'Dark Mode';
+
+    // Theme toggle event - CORRIGIDA
+    themeToggle.addEventListener('click', (e) => {
+        e.preventDefault();
+        const isDark = body.getAttribute('data-theme') === 'dark';
+        const newTheme = isDark ? 'light' : 'dark';
+        
+        body.setAttribute('data-theme', newTheme);
+        themeCheckbox.checked = (newTheme === 'dark');
+        themeText.textContent = newTheme === 'dark' ? 'Light Mode' : 'Dark Mode';
+        
+        // Save preference to override system default
+        localStorage.setItem('theme', newTheme);
+        
+        // Update map tiles when theme changes
+        updateMapTheme();
+    });
+
+    // Also respond to system theme changes if no user preference is set
+    if (!savedTheme) {
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            if (!localStorage.getItem('theme')) { // Only if user hasn't set a preference
+                const newTheme = e.matches ? 'dark' : 'light';
+                body.setAttribute('data-theme', newTheme);
+                themeCheckbox.checked = (newTheme === 'dark');
+                themeText.textContent = newTheme === 'dark' ? 'Light Mode' : 'Dark Mode';
+                updateMapTheme();
+            }
+        });
+    }
+}
+
+// Function to update map theme
+function updateMapTheme() {
+    // In a real implementation, you might switch to dark map tiles here
+    // For now, we'll just reload the current tiles
+    map.invalidateSize();
+}
+
+// Initialize theme on page load
+initTheme();
 
 // Toggle config help
 document.getElementById('showConfigHelp')?.addEventListener('click', (e) => {
@@ -414,6 +706,12 @@ function updateDashboard() {
 
 // Initial load
 updateDashboard();
+
+// Show config warning if no API keys are set
+const hasApiKeys = false; // This would be set by PHP in a real environment
+if (!hasApiKeys) {
+    document.getElementById('configWarning').style.display = 'block';
+}
 </script>
 </body>
 </html>
